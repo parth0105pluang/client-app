@@ -6,19 +6,28 @@ var appKey = "Hello-App";
 var cors = require('cors');
 app.use(cors());
 app.get('/:token', (req, res) => {
-    token = req.params.token;
-  const url = `http://localhost:3000/user/validate/${appKey}/${token}`;
+  token = req.params.token;
+  const url = `http://localhost:3000/app/validate/${appKey}/${token}`;
   axios.post(url,{
-    "appName":"google"
+    "appName":"sample"
   })
   .then(response => {
-    console.log(response.data.user);
+    console.log(response.data.userData);
     res.status(200).send({
       message:"Signed Up!!"
   })
   })
-  .catch(error => {
-    console.log(error);
+  .catch(error => { 
+    if(error.response.status == 404){
+      res.status(404).send({
+        message:"Wrong Token"
+    })
+    }
+    else{
+      res.status(error.response.status).send({
+          error
+      })
+    }
   });
 })
 app.listen(port, () => {
